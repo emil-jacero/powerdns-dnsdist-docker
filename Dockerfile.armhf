@@ -23,7 +23,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install dnsdist
 ENV TZ=Europe/Stockholm
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-ADD lib/dnsdist.conf.j2 lib/template.py entrypoint.sh /app/
+ADD src /app
 
 EXPOSE 53/tcp 53/udp
 
