@@ -1,0 +1,31 @@
+FROM debian:buster
+
+LABEL maintainer="emil@jacero.se"
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
+
+RUN apt update && apt install -y ca-certificates curl wget gnupg2 jq dnsutils python3 python3-jinja2 && apt -y upgrade
+
+# Create build arguments with sane defaults
+ARG PDNS_VERSION=15
+# Adding POWERDNS_VERSION environment variable with the value from
+# NOTE: DO NOT OVERWRITE THIS VARIABLE... EVER!
+ENV POWERDNS_VERSION=$PDNS_VERSION
+
+RUN touch /etc/apt/sources.list.d/pdns.list && echo deb [arch=amd64] http://repo.powerdns.com/debian buster-dnsdist-$PDNS_VERSION main >> /etc/apt/sources.list.d/pdns.list
+RUN echo "Package: pdns-*" >> /etc/apt/preferences.d/pdns && \
+    echo "Pin: origin repo.powerdns.com" >> /etc/apt/preferences.d/pdns && \
+    echo "Pin-Priority: 600" >> /etc/apt/preferences.d/pdns
+RUN wget -O- https://repo.powerdns.com/FD380FBB-pub.asc | apt-key add - && apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install dnsdist
+
+ENV TZ=Europe/Stockholm
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+ADD src /app/
+
+EXPOSE 53/tcp 53/udp
+
+WORKDIR /app
+ENTRYPOINT /app/entrypoint.sh
