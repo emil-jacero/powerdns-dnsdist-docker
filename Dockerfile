@@ -14,7 +14,7 @@ ENV LOG_LEVEL=INFO
 
 RUN apt update && apt install -y ca-certificates curl wget gnupg2 jq dnsutils python3 python3-jinja2 && apt -y upgrade
 
-RUN touch /etc/apt/sources.list.d/pdns.list && echo deb [arch=amd64] http://repo.powerdns.com/debian buster-dnsdist-$PDNS_VERSION main >> /etc/apt/sources.list.d/pdns.list
+RUN touch /etc/apt/sources.list.d/pdns.list && echo deb [arch=amd64] http://repo.powerdns.com/ubuntu focal-dnsdist-$PDNS_VERSION main >> /etc/apt/sources.list.d/pdns.list
 RUN echo "Package: pdns-*" >> /etc/apt/preferences.d/pdns && \
     echo "Pin: origin repo.powerdns.com" >> /etc/apt/preferences.d/pdns && \
     echo "Pin-Priority: 600" >> /etc/apt/preferences.d/pdns
@@ -25,8 +25,8 @@ ENV TZ=Europe/Stockholm
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Add src
-ADD src /app
-RUN chown -R 101:101 /app; touch /pdns.conf && chown -R 101:101 /pdns.conf
+ADD src /app/
+RUN chown -R 101:101 /app
 
 USER 101:101
 EXPOSE 53/tcp 53/udp 8000/tcp
