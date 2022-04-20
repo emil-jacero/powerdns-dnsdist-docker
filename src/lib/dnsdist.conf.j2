@@ -9,7 +9,7 @@ setWebserverConfig({password='{{ ENV_WEBSERVER_PASSWORD }}', apiKey='{{ ENV_WEBS
 newServer({address='{{ ENV_AUTOPRIMARY }}', name='autoprimary', pool='autoprimary', mustResolve=false})
 newServer({address='{{ ENV_SECONDARY }}', name='secondary', pool='secondary', mustResolve=false})
 addAction(OpcodeRule(DNSOpcode.Notify),PoolAction('secondary'))
-addAction(OrRule({QTypeRule(DNSQtype.SOA),QTypeRule(DNSQtype.IXFR),QTypeRule(DNSQtype.AXFR)}),PoolAction('autoprimary'))
+addAction(OrRule({QTypeRule(DNSQType.SOA),QTypeRule(DNSQType.IXFR),QTypeRule(DNSQType.AXFR)}),PoolAction('autoprimary'))
 {% endif -%}
 {%- if ENV_OPTS -%}
 {% if ENV_OPTS|is_list -%}
