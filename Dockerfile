@@ -25,7 +25,7 @@ ENV TZ=Europe/Stockholm
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Add src
-ADD src /app/
+ADD src /app
 RUN chown -R 101:101 /app
 
 USER 101:101

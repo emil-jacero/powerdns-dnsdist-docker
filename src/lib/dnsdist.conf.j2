@@ -1,0 +1,9 @@
+{%- if ENV_OPTS -%}
+{% if ENV_OPTS|is_list -%}
+{% for opt in ENV_OPTS -%}
+{{ opt }}
+{% endfor -%}
+{% else -%}
+{{ ENV_OPTS }}
+{% endif -%}
+{% endif -%}
