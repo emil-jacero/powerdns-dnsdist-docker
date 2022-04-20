@@ -26,7 +26,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Add src
 ADD src /app
-RUN chown -R 101:101 /app
+RUN mkdir /etc/dnsdist
+RUN chown -R 101:101 /app; chown -R 101:101 /etc/dnsdist
 
 USER 101:101
 EXPOSE 53/tcp 53/udp 8000/tcp
