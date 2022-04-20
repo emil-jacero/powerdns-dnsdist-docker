@@ -60,7 +60,7 @@ class Template:
         self.path = os.path.dirname(template)
         self.name = os.path.basename(template)
         self.log.debug(
-            f"Template path: {'Path_not_provided' if self.path is '' else self.path}"
+            f"Template path: {'Path_not_provided' if self.path == '' else self.path}"
         )
         self.log.debug(f"Template name: {self.name}")
         # Remove file if exists
@@ -80,7 +80,7 @@ class Template:
             Takes template name and a path to the template directory
         """
         # Guessing templates directory
-        if path is None or path is "":
+        if path is None or path == "":
             path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                 'templates')
             self.log.info(f"Missing path to templates. Using default...")
