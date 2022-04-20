@@ -5,6 +5,12 @@ setLocal('{{ ENV_LOCAL_ADDRESS }}', { reusePort=true })
 webserver('{{ ENV_WEBSERVER_ADDRESS }}')
 setWebserverConfig({password='{{ ENV_WEBSERVER_PASSWORD }}', apiKey='{{ ENV_WEBSERVER_APIKEY }}'})
 {% endif -%}
+{%- if ENV_K8S -%}
+newServer({address='{{ ENV_AUTOPRIMARY }}', name='autoprimary', pool='autoprimary', mustResolve=false})
+newServer({address='{{ ENV_SECONDARY }}', name='secondary', pool='secondary', mustResolve=false})
+addAction(OpcodeRule(DNSOpcode.Notify),PoolAction('secondary'))
+addAction(OrRule({QTypeRule(dnsdist.SOA),QTypeRule(dnsdist.IXFR),QTypeRule(dnsdist.AXFR)}),PoolAction('autoprimary'))
+{% endif -%}
 {%- if ENV_OPTS -%}
 {% if ENV_OPTS|is_list -%}
 {% for opt in ENV_OPTS -%}
