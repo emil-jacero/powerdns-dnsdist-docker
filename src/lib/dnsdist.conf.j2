@@ -6,16 +6,16 @@ webserver('{{ ENV_WEBSERVER_ADDRESS }}')
 setWebserverConfig({password='{{ ENV_WEBSERVER_PASSWORD|default('CHANGEME', true) }}',apiKey='{{ ENV_WEBSERVER_APIKEY|default('CHANGEME', true) }}'})
 {% endif -%}
 {%- if ENV_K8S_SECONDARY|default('false', true) == 'true' -%}
-newServer({address='{{ ENV_AUTOPRIMARY|default('127.0.0.1:5353', true) }}',name='autoprimary',pool='autoprimary',mustResolve=false})
+newServer({address='{{ ENV_AUTOPRIMARY|default('192.168.0.10:53', true) }}',name='autoprimary',pool='autoprimary',mustResolve=false})
 newServer({address='127.0.0.1:5301',name='secondary',pool='secondary',mustResolve=false})
 newServer({address='127.0.0.1:5302',name='resolver',pool='resolver',mustResolve=false})
 addAction(AndRule({OpcodeRule(DNSOpcode.Notify), NotRule(makeRule('{{ ENV_AUTOPRIMARY_SUBNET|default('192.168.0.0/24', true) }}'))}), RCodeAction(DNSRCode.REFUSED))
 addAction(OpcodeRule(DNSOpcode.Notify),PoolAction('secondary'))
-addAction(OrRule({QTypeRule(DNSQType.SOA),QTypeRule(DNSQType.NS),QTypeRule(DNSQType.IXFR),QTypeRule(DNSQType.AXFR)}),PoolAction('autoprimary'))
+addAction(AndRule({OrRule({QTypeRule(DNSQType.SOA),QTypeRule(DNSQType.NS),QTypeRule(DNSQType.IXFR),QTypeRule(DNSQType.AXFR)}),makeRule('{{ ENV_DNSDIST_SUBNET|default('127.0.0.0/8', true) }}')}),PoolAction('autoprimary'))
 addAction(AllRule(),PoolAction('resolver'))
 {%- elif ENV_K8S_PRIMARY|default('false', true) == 'true' -%}
 newServer({address='127.0.0.1:5301',name='autoprimary',pool='autoprimary',mustResolve=false})
-addAction(AndRule({OrRule({QTypeRule(DNSQType.AXFR),QTypeRule(DNSQType.IXFR)}),NotRule(makeRule('{{ ENV_AUTOSECONDARY_SUBNET|default('192.168.0.0/24', true) }}'))}),RCodeAction(DNSRCode.REFUSED))
+addAction(AndRule({OrRule({QTypeRule(DNSQType.AXFR),QTypeRule(DNSQType.IXFR)}),NotRule(makeRule('{{ ENV_AUTOSECONDARY_SUBNET|default('192.168.1.0/24', true) }}'))}),RCodeAction(DNSRCode.REFUSED))
 addAction(AllRule(),PoolAction('secondary'))
 {% endif -%}
 {%- if ENV_OPTS -%}
