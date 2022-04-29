@@ -3,7 +3,7 @@ setLocal('{{ ENV_LOCAL_ADDRESS }}',{ reusePort=true })
 {% endif -%}
 {%- if ENV_WEBSERVER_ADDRESS -%}
 webserver('{{ ENV_WEBSERVER_ADDRESS }}')
-setWebserverConfig({password='{{ ENV_WEBSERVER_PASSWORD|default('CHANGEME', true) }}',apiKey='{{ ENV_WEBSERVER_APIKEY|default('CHANGEME', true) }}'})
+setWebserverConfig({password='{{ ENV_WEBSERVER_PASSWORD|default('CHANGEME', true) }}',apiKey='{{ ENV_WEBSERVER_APIKEY|default('CHANGEME', true) }},acl='{{ ENV_WEBSERVER_ACL|default('0.0.0.0/0', true) }}'})
 {% endif -%}
 {%- if ENV_K8S_SECONDARY|default('false', true) == 'true' -%}
 newServer({address='{{ ENV_AUTOPRIMARY|default('192.168.0.10:53', true) }}',name='autoprimary',pool='autoprimary',mustResolve=false})
